@@ -72,9 +72,9 @@ class Proxy
 
         // Check for subdirectory.
         if ($path = $target->getPath()) {
-            if($newPath!=""){
+            //if($newPath!=""){
                 $path = str_replace($newPath,"",$path);
-            }
+            //}
             $uri = $uri->withPath(rtrim($path, '/') . '/' . ltrim($uri->getPath(), '/'));
         }
 
