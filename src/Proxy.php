@@ -56,7 +56,7 @@ class Proxy
      * @throws UnexpectedValueException
      * @return ResponseInterface
      */
-    public function to($target,$newPath="")
+    public function to($target,$repPath="",$newPath="")
     {
         if ($this->request === null) {
             throw new UnexpectedValueException('Missing request instance.');
@@ -73,7 +73,7 @@ class Proxy
         // Check for subdirectory.
         if ($path = $target->getPath()) {
             //if($newPath!=""){
-                $path = str_replace($newPath,"",$path);
+                $path = str_replace($repPath,"",$path);
             //}
             $uri = $uri->withPath(rtrim($path, '/') . '/' . ltrim($uri->getPath(), '/'));
         }
