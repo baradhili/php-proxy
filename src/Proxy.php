@@ -73,10 +73,14 @@ class Proxy
         // Check for subdirectory.
         
         if ($path = $target->getPath()) {
+            syslog(LOG_INFO|LOG_LOCAL0, "path orig:".$path);
             //if($newPath!=""){
                 $path = str_replace($repPath,"",$path);
             //}
             syslog(LOG_INFO|LOG_LOCAL0, "path:".$path);
+            // add new path in
+            $path = $path . $newPath;
+            syslog(LOG_INFO|LOG_LOCAL0, "path-final:".$path);
             $uri = $uri->withPath(rtrim($path, '/') . '/' . ltrim($uri->getPath(), '/'));
         }
         syslog(LOG_INFO|LOG_LOCAL0, "out of path");
