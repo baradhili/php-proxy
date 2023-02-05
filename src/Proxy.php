@@ -48,7 +48,11 @@ class Proxy
             return $this->uri;
         };
         $uri = $getFooBar->call($request);
-        syslog(LOG_INFO, "request:".print_r($uri,true));
+        $getPath = function() {
+            return $this->path;
+        };
+        $path = $getPath->call($uri);
+        syslog(LOG_INFO, "request:".print_r($path,true));
 
         $this->request = $request;
 
