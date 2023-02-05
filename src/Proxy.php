@@ -42,7 +42,7 @@ class Proxy
      * @param  RequestInterface $request
      * @return $this
      */
-    public function forward(RequestInterface $request)
+    public function forward(RequestInterface $request,$repPath="",$newPath="")
     {
         $getFooBar = function() {
             return $this->uri;
@@ -52,6 +52,7 @@ class Proxy
             return $this->path;
         };
         $path = $getPath->call($uri);
+        $path = str_replace($repPath, $newPath, $path);
         syslog(LOG_INFO, "request:".print_r($path,true));
 
         $this->request = $request;
@@ -66,7 +67,7 @@ class Proxy
      * @throws UnexpectedValueException
      * @return ResponseInterface
      */
-    public function to($target,$repPath="",$newPath="")
+    public function to($target)
     {
         if ($this->request === null) {
             throw new UnexpectedValueException('Missing request instance.');
@@ -83,7 +84,6 @@ class Proxy
         // Check for subdirectory.
         
         if ($path = $target->getPath()) {
-            $path = $path . $newPath;
             $uri = $uri->withPath(rtrim($path, '/') . '/' . ltrim($uri->getPath(), '/'));
         }
 
