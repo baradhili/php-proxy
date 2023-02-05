@@ -45,7 +45,6 @@ class Proxy
     public function forward(RequestInterface $request)
     {
         $this->request = $request;
-        syslog(LOG_INFO|LOG_LOCAL0, "request:".print_r($request,true));
 
         return $this;
     }
@@ -77,12 +76,15 @@ class Proxy
             $path = $path . $newPath;
             $uri = $uri->withPath(rtrim($path, '/') . '/' . ltrim($uri->getPath(), '/'));
         }
-        syslog(LOG_INFO|LOG_LOCAL0, "out of path");
+
         $request = $this->request->withUri($uri);
+
+        syslog(LOG_INFO|LOG_LOCAL0, "request:".print_r($request['uri'],true));
 
         $stack = $this->filters;
 
         $stack[] = function (RequestInterface $request, ResponseInterface $response, callable $next) {
+
             try {
                 $response = $this->adapter->send($request);
             } catch (ClientException $ex) {
