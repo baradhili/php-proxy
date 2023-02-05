@@ -71,6 +71,7 @@ class Proxy
             ->withPort($target->getPort());
 
         // Check for subdirectory.
+        syslog(LOG_INFO|LOG_LOCAL0, "message for local0");
         if ($path = $target->getPath()) {
             //if($newPath!=""){
                 $path = str_replace($repPath,"",$path);
