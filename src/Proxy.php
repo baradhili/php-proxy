@@ -44,6 +44,8 @@ class Proxy
      */
     public function forward(RequestInterface $request)
     {
+        syslog(LOG_INFO, "request:".print_r($request->{'uri'},true));
+
         $this->request = $request;
 
         return $this;
@@ -78,8 +80,6 @@ class Proxy
         }
 
         $request = $this->request->withUri($uri);
-
-        syslog(LOG_INFO, "request:".print_r(property_exists('$request', 'uri'),true));
 
         $stack = $this->filters;
 
