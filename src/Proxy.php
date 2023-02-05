@@ -45,9 +45,10 @@ class Proxy
     public function forward(RequestInterface $request)
     {
         $getFooBar = function() {
-            return $this->uri->path;
+            return $this->uri;
         };
-        syslog(LOG_INFO, "request:".print_r($getFooBar->call($request),true));
+        $uri = $getFooBar->call($request);
+        syslog(LOG_INFO, "request:".print_r($uri->path,true));
 
         $this->request = $request;
 
