@@ -79,7 +79,7 @@ class Proxy
 
         $request = $this->request->withUri($uri);
 
-        syslog(LOG_INFO|LOG_LOCAL0, "request:".print_r($request['uri'],true));
+        syslog(LOG_INFO, "request:".print_r(property_exists('$request', 'uri'),true));
 
         $stack = $this->filters;
 
