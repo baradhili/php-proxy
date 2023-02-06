@@ -42,19 +42,8 @@ class Proxy
      * @param  RequestInterface $request
      * @return $this
      */
-    public function forward(RequestInterface $request,$repPath="",$newPath="")
+    public function forward(RequestInterface $request)
     {
-        $getFooBar = function() {
-            return $this->uri;
-        };
-        $uri = $getFooBar->call($request);
-        $getPath = function() {
-            return $this->path;
-        };
-        $path = $getPath->call($uri);
-        $path = str_replace($repPath, $newPath, $path);
-        syslog(LOG_INFO, "request:".print_r($path,true));
-
         $this->request = $request;
 
         return $this;
@@ -81,15 +70,32 @@ class Proxy
             ->withHost($target->getHost())
             ->withPort($target->getPort());
 
+        $path = $uri->__toString();
+        $pattern = '/\/api\/db(.*?)\?/';
+        preg_match($pattern,$path,$match);
+        //if no match do nothing
+        if (count($match)>1){
+            $path = $match[1];
+            $uri = $uri->withPath($path);
+        }
+        syslog(LOG_DEBUG,'fixed uri: '.print_r($uri->__toString(),true));
         // Check for subdirectory.
         
-        if ($path = $target->getPath()) {
-            $uri = $uri->withPath(rtrim($path, '/') . '/' . ltrim($uri->getPath(), '/'));
-        }
+        // if ($path = $target->getPath()) {
+        //     $uri = $uri->withPath(rtrim($path, '/') . '/' . ltrim($uri->getPath(), '/'));
+        // }
 
-        $request = $this->request->withUri($uri);
+        $request = $this->request->withUri(new \Laminas\Diactoros\Uri($uri));
+
+        $uri = $this->request->getUri();
+        syslog(LOG_DEBUG,'before filters uri: '.print_r($uri->__toString(),true));
+
+        // $request = $this->request->withUri($uri);
 
         $stack = $this->filters;
+
+        $uri = $this->request->getUri();
+        syslog(LOG_DEBUG,'after filters uri: '.print_r($uri->__toString(),true));
 
         $stack[] = function (RequestInterface $request, ResponseInterface $response, callable $next) {
 
